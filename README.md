@@ -68,7 +68,7 @@ try:
     command_paths: dict = check_prerequisite(prerequisites)
 except PrerequisiteCheckError as err:
     print("Prerequisite check failed:")
-    for error in e.errors:
+    for error in err.errors:
         print(error)
     sys.exit(0)
 
