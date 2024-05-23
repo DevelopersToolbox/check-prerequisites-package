@@ -12,6 +12,9 @@ The tests cover various scenarios including:
 - An empty list of prerequisites
 
 Functions:
+    test_version():
+        Tests if the __version__ is setup correctly.
+
     test_all_prerequisites_installed(mocker):
         Tests if the check_prerequisite function correctly identifies all installed commands.
 
@@ -35,9 +38,30 @@ Dependencies:
 
 """
 
+from typing import Optional
+
+import importlib.metadata
+
 import pytest
 
 from wolfsoftware.prereqs import check_prerequisite, PrerequisiteCheckError  # pylint: disable=import-error
+
+
+def test_version() -> None:
+    """
+    Test that a version is defined.
+
+    Should return the version of the package.
+    """
+    version: Optional[str] = None
+
+    try:
+        version = importlib.metadata.version('wolfsoftware.prereqs')
+    except importlib.metadata.PackageNotFoundError:
+        version = None
+
+    assert version is not None, "Version should be set"    # nosec: B101
+    assert version != 'unknown', f"Expected version, but got {version}"    # nosec: B101
 
 
 def test_all_prerequisites_installed(mocker) -> None:
