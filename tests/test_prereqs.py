@@ -38,9 +38,11 @@ Dependencies:
 
 """
 
-import pytest
+from typing import Optional
 
 import importlib.metadata
+
+import pytest
 
 from wolfsoftware.prereqs import check_prerequisite, PrerequisiteCheckError  # pylint: disable=import-error
 
