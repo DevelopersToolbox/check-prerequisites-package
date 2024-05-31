@@ -116,7 +116,7 @@ def check_prerequisite(prerequisite_commands: List) -> Dict:
     for command in prerequisite_commands:
         full_path: Optional[str] = shutil.which(command, path=expanded_search_path)
         if full_path is None:
-            errors_verbose.append(f"{command} is not installed - Aborting")
+            errors_verbose.append(f"{command} is not installed")
         else:
             command_paths[command] = full_path
 
