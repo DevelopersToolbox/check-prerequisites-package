@@ -128,7 +128,7 @@ def test_some_prerequisites_missing(mocker) -> None:
         check_prerequisite(prerequisites)
 
     assert len(exc_info.value.errors) == 1  # nosec: B101
-    assert exc_info.value.errors[0] == "git is not installed - Aborting"  # nosec: B101
+    assert exc_info.value.errors[0] == "git is not installed"  # nosec: B101
 
 
 def test_all_prerequisites_missing(mocker) -> None:
@@ -159,8 +159,8 @@ def test_all_prerequisites_missing(mocker) -> None:
         check_prerequisite(prerequisites)
 
     assert len(exc_info.value.errors) == 2  # nosec: B101
-    assert "python is not installed - Aborting" in exc_info.value.errors  # nosec: B101
-    assert "git is not installed - Aborting" in exc_info.value.errors  # nosec: B101
+    assert "python is not installed" in exc_info.value.errors  # nosec: B101
+    assert "git is not installed" in exc_info.value.errors  # nosec: B101
 
 
 def test_empty_prerequisites_list() -> None:
