@@ -44,7 +44,7 @@ import importlib.metadata
 
 import pytest
 
-from wolfsoftware.prereqs import check_prerequisite, PrerequisiteCheckError  # pylint: disable=import-error
+from wolfsoftware.prereqs import check_prerequisite, PrerequisiteCheckError  # pylint: disable=import-error, no-name-in-module
 
 
 def test_version() -> None:
@@ -83,8 +83,10 @@ def test_all_prerequisites_installed(mocker) -> None:
     Raises:
         AssertionError: If the function does not return the expected result.
     """
-    # Mock shutil.which to return valid paths
-    mocker.patch('shutil.which', side_effect=lambda cmd: f"/usr/bin/{cmd}" if cmd in ["python", "git"] else None)
+    # Mock shutil.which to handle the additional path parameter
+    def mock_which(cmd, path=None) -> str:  # pylint: disable=unused-argument
+        return f"/usr/bin/{cmd}"
+    mocker.patch('shutil.which', side_effect=mock_which)
 
     prerequisites: list[str] = ["python", "git"]
     expected_result: dict[str, str] = {
@@ -114,8 +116,12 @@ def test_some_prerequisites_missing(mocker) -> None:
         AssertionError: If the function does not raise the expected exception or
                         if the exception does not contain the correct error message.
     """
-    # Mock shutil.which to return None for missing commands
-    mocker.patch('shutil.which', side_effect=lambda cmd: f"/usr/bin/{cmd}" if cmd == "python" else None)
+    # Mock shutil.which to handle the additional path parameter
+    def mock_which(cmd, path=None) -> Optional[str]:  # pylint: disable=unused-argument
+        if cmd == "python":
+            return f"/usr/bin/{cmd}"
+        return None
+    mocker.patch('shutil.which', side_effect=mock_which)
 
     prerequisites: list[str] = ["python", "git"]
     with pytest.raises(PrerequisiteCheckError) as exc_info:
