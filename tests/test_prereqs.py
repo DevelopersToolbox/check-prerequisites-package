@@ -44,7 +44,7 @@ import importlib.metadata
 
 import pytest
 
-from wolfsoftware.prereqs import check_prerequisite, PrerequisiteCheckError  # pylint: disable=import-error
+from wolfsoftware.prereqs import check_prerequisite, PrerequisiteCheckError  # pylint: disable=import-error, no-name-in-module
 
 
 def test_version() -> None:
@@ -117,7 +117,7 @@ def test_some_prerequisites_missing(mocker) -> None:
                         if the exception does not contain the correct error message.
     """
     # Mock shutil.which to handle the additional path parameter
-    def mock_which(cmd, path=None) -> str | None:  # pylint: disable=unused-argument
+    def mock_which(cmd, path=None) -> Optional[str]:  # pylint: disable=unused-argument
         if cmd == "python":
             return f"/usr/bin/{cmd}"
         return None
