@@ -41,11 +41,42 @@ Exceptions:
 # pylint: disable=relative-beyond-top-level
 
 import shutil
+import os
+
+from typing import Dict, List
 
 from .exceptions import PrerequisiteCheckError
 
 
-def check_prerequisite(prerequisite_commands: list) -> dict:
+def generate_expanded_path() -> str:
+    """
+    Generate an expanded version of the system's PATH environment variable.
+
+    This function performs the following steps:
+    1. Retrieves the current PATH environment variable.
+    2. Splits the PATH into individual paths based on the system's path separator.
+    3. Expands any paths that start with a tilde (~) to their full user directory paths.
+    4. Joins the expanded paths back into a single string using the system's path separator.
+
+    Returns:
+        str: The expanded PATH environment variable as a single string.
+    """
+    # Retrieve the current $PATH
+    current_path: str = os.environ.get('PATH', '')
+
+    # Split the $PATH into individual paths
+    path_elements: List[str] = current_path.split(os.pathsep)
+
+    # Expand paths that start with ~
+    expanded_path_elements: List[str] = [os.path.expanduser(path) for path in path_elements]
+
+    # Join the expanded paths back into a single string
+    expanded_path: str = os.pathsep.join(expanded_path_elements)
+
+    return expanded_path
+
+
+def check_prerequisite(prerequisite_commands: List) -> Dict:
     """
     Check if the specified prerequisite commands are installed on the system.
 
@@ -77,11 +108,13 @@ def check_prerequisite(prerequisite_commands: list) -> dict:
             for error in e.errors:
                 print(error)
     """
-    errors_verbose: list = []
-    command_paths: dict = {}
+    errors_verbose: List = []
+    command_paths: Dict = {}
+
+    expanded_search_path: str = generate_expanded_path()
 
     for command in prerequisite_commands:
-        full_path: str | None = shutil.which(command)
+        full_path: str | None = shutil.which(command, path=expanded_search_path)
         if full_path is None:
             errors_verbose.append(f"{command} is not installed - Aborting")
         else:
